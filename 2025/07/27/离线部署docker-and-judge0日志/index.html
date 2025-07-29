@@ -1,0 +1,712 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="hexy">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="离线部署docker首先下载离线安装包：https:&#x2F;&#x2F;download.docker.com&#x2F;linux&#x2F;static&#x2F;stable&#x2F; 将安装包拷贝到目标服务器上 在主机上解压文件： 12345tar -xvzf docker-26.1.4.tgz#解压完之后的文件会放到当前目录中的docker目录中#递归的赋予docker目录中文件可执行权限sudo chmod 755 -R docker s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="离线部署docker and judge0日志">
+<meta property="og:url" content="https://hexiangyou.github.io/2025/07/27/%E7%A6%BB%E7%BA%BF%E9%83%A8%E7%BD%B2docker-and-judge0%E6%97%A5%E5%BF%97/index.html">
+<meta property="og:site_name" content="你好世界">
+<meta property="og:description" content="离线部署docker首先下载离线安装包：https:&#x2F;&#x2F;download.docker.com&#x2F;linux&#x2F;static&#x2F;stable&#x2F; 将安装包拷贝到目标服务器上 在主机上解压文件： 12345tar -xvzf docker-26.1.4.tgz#解压完之后的文件会放到当前目录中的docker目录中#递归的赋予docker目录中文件可执行权限sudo chmod 755 -R docker s">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-07-27T06:28:05.000Z">
+<meta property="article:modified_time" content="2025-07-29T13:29:28.124Z">
+<meta property="article:author" content="hexy">
+<meta property="article:tag" content="原创">
+<meta name="twitter:card" content="summary_large_image">
+  
+  
+  
+  <title>离线部署docker and judge0日志 - 你好世界</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1749284_5i9bdhy70f8.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/c/font_1736178_k526ubmyhba.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"hexiangyou.github.io","root":"/","version":"1.9.8","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":{"measurement_id":null},"tencent":{"sid":null,"cid":null},"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false},"umami":{"src":null,"website_id":null,"domains":null,"start_time":"2024-01-01T00:00:00.000Z","token":null,"api_server":null}},"search_path":"/local-search.xml","include_content_in_search":true};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>你好世界</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/" target="_self">
+                <i class="iconfont icon-home-fill"></i>
+                <span>首页</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/" target="_self">
+                <i class="iconfont icon-archive-fill"></i>
+                <span>归档</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/" target="_self">
+                <i class="iconfont icon-category-fill"></i>
+                <span>分类</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/" target="_self">
+                <i class="iconfont icon-tags-fill"></i>
+                <span>标签</span>
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/" target="_self">
+                <i class="iconfont icon-user-fill"></i>
+                <span>关于</span>
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              <i class="iconfont icon-search"></i>
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">
+              <i class="iconfont icon-dark" id="color-toggle-icon"></i>
+            </a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/default.png') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="离线部署docker and judge0日志"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2025-07-27 14:28" pubdate>
+          2025年7月27日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          1.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          10 分钟
+        
+      </span>
+    
+
+    
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <h1 id="seo-header">离线部署docker and judge0日志</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <h2 id="离线部署docker"><a href="#离线部署docker" class="headerlink" title="离线部署docker"></a>离线部署docker</h2><p>首先下载离线安装包：<a target="_blank" rel="noopener" href="https://download.docker.com/linux/static/stable/">https://download.docker.com/linux/static/stable/</a></p>
+<p>将安装包拷贝到目标服务器上</p>
+<p>在主机上解压文件：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs shell">tar -xvzf docker-26.1.4.tgz<br><span class="hljs-meta prompt_">#</span><span class="language-bash">解压完之后的文件会放到当前目录中的docker目录中</span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">递归的赋予docker目录中文件可执行权限</span><br>sudo chmod 755 -R docker <br>sudo cp docker/* /usr/bin/<br></code></pre></td></tr></table></figure>
+
+<p>配置docker服务：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs shell">[Unit]<br>Description=Docker Application Container Engine<br>Documentation=https://docs.docker.com<br>After=network-online.target firewalld.service<br>Wants=network-online.target<br>  <br>[Service]<br>Type=notify<br><span class="hljs-meta prompt_"># </span><span class="language-bash">the default is not to use systemd <span class="hljs-keyword">for</span> cgroups because the delegate issues still</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">exists and systemd currently does not support the cgroup feature <span class="hljs-built_in">set</span> required</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-keyword">for</span> containers run by docker</span><br>ExecStart=/usr/bin/dockerd -H unix:///var/run/docker.sock --selinux-enabled=false --default-ulimit nofile=65536:65536<br>ExecReload=/bin/kill -s HUP $MAINPID<br><span class="hljs-meta prompt_"># </span><span class="language-bash">Having non-zero Limit*s causes performance problems due to accounting overhead</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-keyword">in</span> the kernel. We recommend using cgroups to <span class="hljs-keyword">do</span> container-local accounting.</span><br>LimitNOFILE=infinity<br>LimitNPROC=infinity<br>LimitCORE=infinity<br><span class="hljs-meta prompt_"># </span><span class="language-bash">Uncomment TasksMax <span class="hljs-keyword">if</span> your systemd version supports it.</span><br><span class="hljs-meta prompt_"># </span><span class="language-bash">Only systemd 226 and above support this version.</span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">TasksMax=infinity</span><br>TimeoutStartSec=0<br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-built_in">set</span> delegate <span class="hljs-built_in">yes</span> so that systemd does not reset the cgroups of docker containers</span><br>Delegate=yes<br><span class="hljs-meta prompt_"># </span><span class="language-bash"><span class="hljs-built_in">kill</span> only the docker process, not all processes <span class="hljs-keyword">in</span> the cgroup</span><br>KillMode=process<br><span class="hljs-meta prompt_"># </span><span class="language-bash">restart the docker process <span class="hljs-keyword">if</span> it exits prematurely</span><br>Restart=on-failure<br>StartLimitBurst=3<br>StartLimitInterval=60s<br>  <br>[Install]<br>WantedBy=multi-user.target<br><br></code></pre></td></tr></table></figure>
+
+<p>赋予docker服务配置文件docker.service执行权限</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo chmod +x /etc/systemd/system/docker.service<br></code></pre></td></tr></table></figure>
+
+<p>启动docker服务：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment">#加载systemctl配置</span><br><span class="hljs-built_in">sudo</span> systemctl daemon-reload<br><span class="hljs-comment">#设置开机自启动</span><br><span class="hljs-built_in">sudo</span> systemctl <span class="hljs-built_in">enable</span> docker.service <br><span class="hljs-comment">#启动docker服务</span><br><span class="hljs-built_in">sudo</span> systemctl start docker <br><span class="hljs-comment">#检查docker状态</span><br><span class="hljs-built_in">sudo</span> systemctl status docker<br><span class="hljs-comment">#查看docker版本</span><br>docker -v<br></code></pre></td></tr></table></figure>
+
+<p>自定义docker运行目录：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">配置docker服务自定义设置</span><br>sudo mkdir -p /etc/docker<br>sudo mkdir -p /data/app/dockerWork<br>sudo vim /etc/docker/daemon.json<br></code></pre></td></tr></table></figure>
+
+<p>在文件中添加下述内容：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">&#123;<br>  &quot;data-root&quot;: &quot;/data/dockerData&quot;,#填入自己的目录<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>更改后执行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs shell">sudo systemctl daemon-reload<br>sudo systemctl restart docker <br>docker info #输出查看Root Dir<br></code></pre></td></tr></table></figure>
+
+<p>出现的问题：exec: “fuse-overlayfs”: executable file not found in $PATH</p>
+<p>解决办法：安装fuse-overlayfs</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">安装yun-utils</span><br>sudo yum install -y yum-utils<br><span class="hljs-meta prompt_">#</span><span class="language-bash">在联网的机器中下载rpm</span><br>mkdir -p /tmp/fuse-overlayfs &amp;&amp; cd /tmp/fuse-overlayfs<br>yumdownloader --resolve --destdir=. fuse-overlayfs<br><span class="hljs-meta prompt_">#</span><span class="language-bash">将下载好的包拷贝到目标服务器，并在目录下执行</span><br>sudo rpm -Uvh --force *.rpm<br><span class="hljs-meta prompt_">#</span><span class="language-bash">验证安装</span><br>fuse-overlayfs --version<br><span class="hljs-meta prompt_"></span><br><span class="hljs-meta prompt_">#</span><span class="language-bash">过程可能出现错误：依赖检测失败：</span><br>	libfuse3.so.3()(64bit) 被 fuse-overlayfs-0.7.2-6.el7_8.x86_64 需要<br>	libfuse3.so.3(FUSE_3.0)(64bit) 被 fuse-overlayfs-0.7.2-6.el7_8.x86_64 需要<br>	libfuse3.so.3(FUSE_3.2)(64bit) 被 fuse-overlayfs-0.7.2-6.el7_8.x86_64 需要<br><span class="hljs-meta prompt_">#</span><span class="language-bash">使用下述命令继续下载缺失包</span><br>yumdownloader --resolve fuse3 fuse3-libs<br><br></code></pre></td></tr></table></figure>
+
+<p>离线安装docker compose</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">下载安装包</span><br>https://github.com/docker/compose/releases<br><span class="hljs-meta prompt_">#</span><span class="language-bash">或者</span><br>wget https://github.com/docker/compose/releases/download/v2.27.0/docker-compose-linux-x86_64<br><span class="hljs-meta prompt_">#</span><span class="language-bash">复制到离线服务器上</span><br>chmod +x docker-compose-linux-x86_64<br>mv docker-compose-linux-x86_64 docker-compose<br><span class="hljs-meta prompt_">#</span><span class="language-bash">将文件放到Docker CLI插件默认目录中</span><br>mkdir -p ~/.docker/cli-plugins<br>mv docker-compose ~/.docker/cli-plugins/docker-compose<br>chmod +x ~/.docker/cli-plugins/docker-compose<br><span class="hljs-meta prompt_">#</span><span class="language-bash">或者放到系统级插件目录</span><br>sudo mkdir -p /usr/local/lib/docker/cli-plugins<br>sudo mv docker-compose /usr/local/lib/docker/cli-plugins/docker-compose<br>sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose<br><span class="hljs-meta prompt_">#</span><span class="language-bash">验证安装</span><br>docker compose version<br><br></code></pre></td></tr></table></figure>
+
+<p>部署docker出现问题：当前用户无法访问docker守护进程的Unix socker文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">docker ps -a<br>permission denied while trying to connect to the Docker daemon socket at unix:///var/run/docker.sock: Get &quot;http://%2Fvar%2Frun%2Fdocker.sock/v1.45/containers/json?all=1&quot;: dial unix /var/run/docker.sock: connect: permission denied <br></code></pre></td></tr></table></figure>
+
+<p>解决方案：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">查看 socket 文件的权限：</span><br>ls -l /var/run/docker.sock<br><span class="hljs-meta prompt_">#</span><span class="language-bash">正常情况是</span><br>srw-rw---- 1 root docker 0 Jul 25 22:13 /var/run/docker.sock<br><span class="hljs-meta prompt_">#</span><span class="language-bash">如果组不是 docker，或没有 rw- 权限，执行：</span><br>sudo chown root:docker /var/run/docker.sock<br>sudo chmod 660 /var/run/docker.sock<br><span class="hljs-meta prompt_">#</span><span class="language-bash">将当前用户添加到docker组</span><br>sudo groupadd docker<br>sudo usermod -aG docker $USER<br>newgrp docker<br></code></pre></td></tr></table></figure>
+
+
+
+<h2 id="离线部署Judge"><a href="#离线部署Judge" class="headerlink" title="离线部署Judge"></a>离线部署Judge</h2><p>首先在联网机器上准备好judge0的镜像和代码</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">#</span><span class="language-bash">克隆judge0项目</span><br>git clone https://github.com/judge0/judge0.git<br>cd judge0<br><span class="hljs-meta prompt_">#</span><span class="language-bash">下载镜像</span><br>docker compose -f docker-compose.yml pull<br><span class="hljs-meta prompt_">#</span><span class="language-bash">导出镜像</span><br>docker save -o judge0_images.tar judge0/judge0:latest postgres:16.2 redis:7.2.4<br><span class="hljs-meta prompt_">#</span><span class="language-bash">拷贝镜像到离线机器 导入</span><br>docker load -i judge0_images.tar<br></code></pre></td></tr></table></figure>
+
+<p>在judge目录中执行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">docker-compose up -d<br></code></pre></td></tr></table></figure>
+
+<p>然后就能看到启动的容器，不出意外的话就能访问judge0的api了</p>
+<p>测试</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">curl http://localhost:2358/languages<br></code></pre></td></tr></table></figure>
+
+<h2 id="部署遇到的问题"><a href="#部署遇到的问题" class="headerlink" title="部署遇到的问题"></a>部署遇到的问题</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs shell">[ghips@cugsat11 DZ01]$ docker load -i judge0_images.tar<br>dd5242c2dc8a: Loading layer  119.2MB/119.2MB<br>6f1c84e6ec59: Loading layer  17.11MB/17.11MB<br>b52c1c103fae: Loading layer  17.85MB/17.85MB<br>e6d60910d056: Loading layer  149.9MB/149.9MB<br>f63773c65620: Loading layer  520.2MB/520.2MB<br>c8e492f75d96: Loading layer  502.4MB/502.4MB<br>c0b285f105a3: Loading layer  139.1MB/139.1MB<br>94f42f282973: Loading layer  355.6MB/355.6MB<br>a01174846de8: Loading layer  839.9MB/839.9MB<br>93ef8e607237: Loading layer  330.6MB/330.6MB<br>96bdb92d8d86: Loading layer  14.15MB/14.15MB<br>a977fbf9c987: Loading layer  225.9MB/225.9MB<br>74fd0441fe80: Loading layer  2.084GB/2.084GB<br>706af213e51e: Loading layer  669.6MB/669.6MB<br>2dc66f1cc28d: Loading layer  76.08MB/76.08MB<br>write /var/lib/docker/vfs/dir/c001c39b7e4fb4d7b256da603489645fb69c5da681836004af90e325c5c9bd22/usr/local/ghc-8.8.1/lib/ghc-8.8.1/Cabal-3.0.0.0/HSCabal-3.0.0.0.o: no space left on device<br></code></pre></td></tr></table></figure>
+
+<p>上述没空间了，可以切换docker运行目录。</p>
+<p>问题2：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs shell">[ghips@cugsat11 DZ01]$ sudo docker load -i judge0_images.tar<br>dd5242c2dc8a: Loading layer  119.2MB/119.2MB<br>6f1c84e6ec59: Loading layer  17.11MB/17.11MB<br>b52c1c103fae: Loading layer  17.85MB/17.85MB<br>e6d60910d056: Loading layer  149.9MB/149.9MB<br>f63773c65620: Loading layer  520.2MB/520.2MB<br>c8e492f75d96: Loading layer  502.4MB/502.4MB<br>c0b285f105a3: Loading layer  139.1MB/139.1MB<br>94f42f282973: Loading layer  355.6MB/355.6MB<br>a01174846de8: Loading layer  839.9MB/839.9MB<br>93ef8e607237: Loading layer  330.6MB/330.6MB<br>96bdb92d8d86: Loading layer  14.15MB/14.15MB<br>a977fbf9c987: Loading layer  225.9MB/225.9MB<br>74fd0441fe80: Loading layer  2.084GB/2.084GB<br>706af213e51e: Loading layer  669.6MB/669.6MB<br>2dc66f1cc28d: Loading layer  76.08MB/76.08MB<br>d4b5a090f908: Loading layer  138.3MB/138.3MB<br>6abc0d38bb19: Loading layer  9.417MB/9.417MB<br>c3cba357858f: Loading layer  354.5MB/354.5MB<br>1f8a2cdb429f: Loading layer  335.2MB/335.2MB<br>8e405162993d: Loading layer  40.47MB/40.47MB<br>ddc736983f7e: Loading layer  352.2MB/352.2MB<br>7265bf73ba48: Loading layer    152MB/152MB<br>363040cff96d: Loading layer  216.9MB/216.9MB<br>597b3b3b8563: Loading layer  434.7kB/434.7kB<br>8323279740f2: Loading layer  152.2MB/152.2MB<br>beb324aeeb51: Loading layer  2.868MB/2.868MB<br>19f87ad64a26: Loading layer  13.05MB/13.05MB<br>0e9bb4586e45: Loading layer  41.63MB/41.63MB<br>5fae1865d171: Loading layer  2.953MB/2.953MB<br>d85c09b6bff0: Loading layer  1.228GB/1.228GB<br>b040914a6c33: Loading layer  61.36MB/61.36MB<br>e546454d5a85: Loading layer  56.46MB/56.46MB<br>unlinkat /etc/logcheck/ignore.d.server: invalid argument<br></code></pre></td></tr></table></figure>
+
+<p>将 Docker 存储驱动切换成 <code>vfs</code>可以解决上述问题</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">&quot;storage-driver&quot;: &quot;vfs&quot;<br></code></pre></td></tr></table></figure>
+
+<p>问题3：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs shell">[ghips@cugsat11 judge0]$ curl http://localhost:2358/languages<br>curl: (56) Recv failure: Connection reset by peer<br></code></pre></td></tr></table></figure>
+
+<p>这个问题暂时不知道如何解决，<strong>可能是系统内核版本太低</strong>又或者是其他问题。</p>
+<p>但是我采取曲线救国策略，利用下述命令可以执行：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">docker exec judge0-server-1 curl http://localhost:2358/languages<br></code></pre></td></tr></table></figure>
+
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Docker/" class="category-chain-item">Docker</a>
+  
+  
+    <span>></span>
+    
+  <a href="/categories/Docker/%E5%9C%A8%E7%BA%BFIDE/" class="category-chain-item">在线IDE</a>
+  
+  
+
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%8E%9F%E5%88%9B/" class="print-no-link">#原创</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>离线部署docker and judge0日志</div>
+      <div>https://hexiangyou.github.io/2025/07/27/离线部署docker-and-judge0日志/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>hexy</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2025年7月27日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a class="print-no-link" target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-cc-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2025/07/11/%E6%A8%A1%E4%BB%BFMYDB%E4%B9%8B%E8%B7%AF/" title="&#39;模仿MYDB之路&#39;">
+                        <span class="hidden-mobile">&#39;模仿MYDB之路&#39;</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header">
+    <i class="iconfont icon-list"></i>
+    <span>目录</span>
+  </p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+    </div>
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.4/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.20.1/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/5.0.0/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
